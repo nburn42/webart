@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Art1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* to remove the top and left whitespace */
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* just to be sure these are full screen*/
+
+        canvas {
+            display: block;
+        }
+
+        /* To remove the scrollbars */
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="100%" height="100%"></canvas>
+<script type="application/javascript">
+    Number.prototype.mod = function (n) {
+        return ((this % n) + n) % n;
+    };
+
+    var repeater = setInterval(run, 0);
+    var canvas = document.getElementById("canvas");
+    canvas.setAttribute('width', window.innerWidth);
+    canvas.setAttribute('height', window.innerHeight);
+
+    var ctx = canvas.getContext("2d");
+    ctx.globalAlpha = 0.5;
+
+    var rhythm = [1, 1, 5, 1, 1, 4, 1, 2, 5, 1, 2, 4];
+    var colorRhythm = [];
+
+    for (let i = 0; i < 10; i++) {
+        colorRhythm.push(makeRandomColor())
+    }
+
+    var x = 10;
+    var y = 50;
+    var speedx = 20;
+    var speedy = 50;
+    var accelerationx = 0;
+    var accelerationy = 0;
+    var i = 0;
+
+    function run() {
+        i = i + 1;
+        // console.log(x % window.innerWidth);
+        // console.log(y % window.innerHeight);
+
+        // change color every time
+        ctx.fillStyle = colorRhythm[i % colorRhythm.length];
+
+        ctx.beginPath();
+        ctx.arc(x.mod(window.innerWidth), y.mod(window.innerHeight), 10 * rhythm[i % rhythm.length], 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+
+        x = x + speedx;
+        speedx = speedx + accelerationx;
+        y = y + speedy;
+        speedy = speedy + accelerationy;
+        // if(x > window.innerWidth && speedx > 0) {
+        //     speedx = -1 * speedx;
+        //     accelerationx = -1 * accelerationx;
+        // }
+        // if(y > window.innerHeight && speedy > 0) {
+        //     speedy = -1 * speedy;
+        //     accelerationy = -1 * accelerationy;
+        // }
+        //
+        // if(x < 0 && speedx < 0) {
+        //     speedx = -1 * speedx;
+        //     accelerationx = -1 * accelerationx;
+        // }
+        // if(y < 0 && speedy < 0) {
+        //     speedy = -1 * speedy;
+        //     accelerationy = -1 * accelerationy;
+        // }
+    }
+
+
+    function makeRandomColor() {
+        return "#" + ((1 << 24) * Math.random() | 0).toString(16);
+    }
+
+
+</script>
+</body>
+</html>

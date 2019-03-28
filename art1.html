@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Art1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* to remove the top and left whitespace */
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* just to be sure these are full screen*/
+
+        canvas {
+            display: block;
+        }
+
+        /* To remove the scrollbars */
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="100%" height="100%"></canvas>
+<script type="application/javascript">
+    var repeater = setInterval(run, 50);
+    var canvas = document.getElementById("canvas");
+    canvas.setAttribute('width', window.innerWidth);
+    canvas.setAttribute('height',  window.innerHeight);
+
+    var ctx = canvas.getContext("2d");
+
+
+    var x = 10;
+    var y = 50;
+    var speedx = 5;
+    var speedy = 20;
+    var accelerationx = 5;
+    var accelerationy = -2;
+    function run() {
+        console.log(makeRandomColor());
+
+        // change color every time
+        ctx.fillStyle = makeRandomColor();
+        ctx.strokeStyle = makeRandomColor();
+
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+
+        x = x + speedx;
+        speedx = speedx + accelerationx;
+        y = y + speedy;
+        speedy = speedy + accelerationy;
+        if(x > window.innerWidth && speedx > 0) {
+            speedx = -1 * speedx;
+            accelerationx = -1 * accelerationx;
+        }
+        if(y > window.innerHeight && speedy > 0) {
+            speedy = -1 * speedy;
+            accelerationy = -1 * accelerationy;
+        }
+
+        if(x < 0 && speedx < 0) {
+            speedx = -1 * speedx;
+            accelerationx = -1 * accelerationx;
+        }
+        if(y < 0 && speedy < 0) {
+            speedy = -1 * speedy;
+            accelerationy = -1 * accelerationy;
+        }
+    }
+
+
+    function makeRandomColor(){
+        return "#"+((1<<24)*Math.random()|0).toString(16);
+    }
+
+
+
+</script>
+</body>
+</html>

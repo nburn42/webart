@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* to remove the top and left whitespace */
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* just to be sure these are full screen*/
+
+        canvas {
+            display: block;
+        }
+
+        /* To remove the scrollbars */
+    </style>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.9.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.9.1/firebase-auth.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-database.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/5.9.1/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="100%" height="100%"></canvas>
+<script type="application/javascript">
+    Number.prototype.mod = function (n) {
+        return ((this % n) + n) % n;
+    };
+
+    // var repeater = setInterval(run, 50);
+    var canvas = document.getElementById("canvas");
+    canvas.setAttribute('width', window.innerWidth);
+    canvas.setAttribute('height', window.innerHeight);
+    canvas.addEventListener('mousemove', run);
+
+    var ctx = canvas.getContext("2d");
+
+    var length = 100;
+    var child_count = 2;
+    var offset = -0.5;
+    var spacing = 0.25;
+    var depth = 8;
+
+    let colorRhythm = [];
+
+    for (let i = 0; i <= 1; i++) {
+        colorRhythm.push(makeRandomColor());
+        console.log(colorRhythm);
+    }
+
+    function draw(x, y, angle, depth) {
+        if (depth === 0) {
+            return;
+        }
+
+        ctx.strokeStyle = colorRhythm[depth % colorRhythm.length];
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        let x2 = x + (length * Math.cos(angle));
+        let y2 = y + (length * Math.sin(angle));
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        for (var i = 0; i < child_count; i++) {
+            draw(x2, y2, angle + (i * spacing) + offset, depth - 1);
+        }
+    }
+
+    function run(e) {
+        let mouseX = parseInt(e.clientX);
+        let mouseY = parseInt(e.clientY);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // change color every time
+        spacing = 2 * Math.PI * mouseX / window.innerWidth;
+        offset = (4 * Math.PI * mouseY / window.innerHeight) - (2 * Math.PI);
+
+        draw(window.innerWidth / 2, window.innerHeight, Math.PI * 1.5, depth);
+    }
+
+    function makeRandomColor() {
+        return "#" + ((1 << 24) * Math.random() | 0).toString(16);
+    }
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    });
+</script>
+</body>
+</html>
