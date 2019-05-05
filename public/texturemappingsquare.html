@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tree</title>
+    <title>Squares</title>
     <style>
         * {
             margin: 0;
@@ -52,6 +52,9 @@
     let width = window.innerWidth / 2;
     let height = window.innerHeight / 2;
 
+    let runStartTime = 0;
+    let runEndTime = 1;
+
     let destloop = [
       [0,0],
       [0,height],
@@ -91,14 +94,6 @@
 
     let imageList = [cloudImg, babyImg, bowlImg, complexImg];
 
-    let colorRhythm = [];
-
-    for (let i = 0; i <= 1; i++) {
-        colorRhythm.push(makeRandomColor());
-        console.log(colorRhythm);
-    }
-
-
     function getColorIndicesForCoord(x, y, width) {
         return y * (width * 4) + x * 4;
     }
@@ -106,10 +101,6 @@
     function drawImage(x, y) {
         let imageIndex = Math.floor(Math.random() * 28749283749) % imageList.length;
         ctx.drawImage(imageList[imageIndex], x, y, width, height);
-    }
-
-    function drawBaby(x, y) {
-        ctx.drawImage(babyImg, x, y, width, height);
     }
 
     function drawSineWaves(xPhase, xFreq, yPhase, yFreq) {
@@ -122,9 +113,15 @@
         for (let x = 0; x < width; x += 1) {
             for (let y = 0; y < height; y += 1) {
                 let index = getColorIndicesForCoord(x, y, width);
-                d[index] = 0;
-                d[index + 1] = Math.round(Math.sin((xFreq * x) + xPhase) * 128) + 128;
-                d[index + 2] = Math.round(Math.sin((yFreq * y) + yPhase) * 128) + 128;
+
+                let hue = (Math.sin((xFreq * x) + xPhase) * 0.5) + 0.5;
+                let value = (Math.sin((yFreq * y) + yPhase) * 0.5) + 0.5;
+
+                let rgb = hslToRgb(hue, 1, value);
+
+                d[index] = rgb[0];
+                d[index + 1] = rgb[1];
+                d[index + 2] = rgb[2];
                 d[index + 3] = 255;
             }
         }
@@ -179,6 +176,8 @@
     }
 
     function run(e) {
+
+
         // let mouseX = parseInt(e.clientX);
         // let mouseY = parseInt(e.clientY);
         //
@@ -188,12 +187,14 @@
         if(readyCount < imageList.length) {
             return
         }
+        if (runEndTime <= runStartTime && runEndTime + 500 < (new Date()).getTime() ) {
+            // run is slow and still running
+            return;
+        }
 
-        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+        runStartTime = (new Date()).getTime();
 
 
-        // drawSineWaves(mouseXPercent * Math.PI * 2, 0.05 * mouseYPercent, mouseYPercent * Math.PI * 2, 0.1 * mouseXPercent);
-        // drawBaby(0, height);
 
         let srcX = 0;
         let srcY = 0;
@@ -215,6 +216,8 @@
             drawImage(destX, destY);
         }
 
+        runEndTime = (new Date()).getTime();
+
         destIndex += 1;
     }
 
@@ -223,7 +226,9 @@
     }
 
     function rgbToHsl(r, g, b) {
-        r /= 255, g /= 255, b /= 255;
+        r /= 255;
+        g /= 255;
+        b /= 255;
 
         var max = Math.max(r, g, b), min = Math.min(r, g, b);
         var h, s, l = (max + min) / 2;
@@ -244,6 +249,33 @@
         }
 
         return [ h, s, l ];
+    }
+
+
+    function hslToRgb(h, s, l) {
+        var r, g, b;
+
+        if (s === 0) {
+            r = g = b = l; // achromatic
+        } else {
+            function hue2rgb(p, q, t) {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            }
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return [ r * 255, g * 255, b * 255 ];
     }
 
 </script>
