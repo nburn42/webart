@@ -49,8 +49,8 @@
 
     var ctx = canvas.getContext("2d");
 
-    let width = window.innerWidth / 2;
-    let height = window.innerHeight / 2;
+    let width = Math.floor(window.innerWidth / 2);
+    let height = Math.floor(window.innerHeight / 2);
 
     let runStartTime = 0;
     let runEndTime = 1;
@@ -146,23 +146,29 @@
             for (let y = 0; y < height; y += 1) {
                 let index = getColorIndicesForCoord(x, y, width);
 
-                let srcHSV = rgbToHsl(m[index], m[index + 1], m[index + 2])
+                let srcHSV = rgbToHsl(m[index], m[index + 1], m[index + 2]);
 
                 let srcX = Math.round(srcHSV[0] * width);
                 let srcY = Math.round(srcHSV[2] * height);
 
                 let srcIndex = getColorIndicesForCoord(srcX, srcY, width);
 
-                // don't draw if it turns into a solid color
-                if(s[srcIndex] === last_value) {
-                    repeat_count += 1;
-                    if (repeat_count > width/2) {
-                        return false;
+                if (x === 10) {
+                    let v = s[srcIndex] + s[srcIndex + 1] + s[srcIndex + 2];
+
+                    // don't draw if it turns into a solid color
+                    console.log(repeat_count, v, last_value);
+                    if (v > last_value - 15 && v < last_value + 15) {
+                        repeat_count += 1;
+                        if (repeat_count > width / 2) {
+                            console.log("Failed");
+                            return false;
+                        }
+                    } else {
+                        repeat_count = 0;
                     }
-                } else {
-                    repeat_count = 0;
+                    last_value = v;
                 }
-                last_value = s[srcIndex];
 
                 d[index] = s[srcIndex];
                 d[index + 1] = s[srcIndex + 1];
@@ -210,11 +216,16 @@
         if(Math.random() > 0.5) mapX = width;
         if(Math.random() > 0.5) mapY = height;
 
-        if(Math.random() > 0.2) {
-            mapTest(srcX, srcY, mapX, mapY, destX, destY);
+        if(Math.random() < 0.5) {
+            srcX = destX;
+            srcY = destY;
         } else {
-            drawImage(destX, destY);
+            mapX = destX;
+            mapY = destY;
         }
+
+        drawImage(destX, destY);
+        mapTest(srcX, srcY, mapX, mapY, destX, destY);
 
         runEndTime = (new Date()).getTime();
 

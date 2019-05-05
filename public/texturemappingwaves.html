@@ -49,8 +49,8 @@
 
     var ctx = canvas.getContext("2d");
 
-    let width = window.innerWidth / 2;
-    let height = window.innerHeight / 2;
+    let width = Math.floor(window.innerWidth / 2);
+    let height = Math.floor(window.innerHeight / 2);
 
     var readyCount = 0;
     var lastMouseMovement = 0;
@@ -194,6 +194,11 @@
     function run(e) {
         var n = (new Date()).getTime();
 
+        console.log(lastMouseMovement + 3000);
+        if (lastMouseMovement + 3000 > n) {
+            return
+        }
+
         if (runEndTime < runStartTime && runEndTime + 500 < n) {
             // run is slow and still running
             return;
@@ -203,20 +208,16 @@
 
         let timeXPercent = Math.sin(n / 3383);
         let timeYPercent = Math.sin(n / 60000);
-        let phaseX = Math.sin(n / 7372);
-        let phaseY = Math.cosh(n / 7372);
+        let phaseX = (n/345);
+        let phaseY = (n/555);
 
         if (Math.random() > 0.95) {
             drawImage(0, 0);
         }
 
-        if (lastMouseMovement + 3000 > n) {
-            return
-        }
-
         drawSineWaves(width, 0,
-            timeXPercent * Math.PI * 2, 0.05 * timeYPercent,
-            timeYPercent * Math.PI * 2, 0.1 * timeXPercent);
+            phaseX, 0.1 * timeYPercent,
+            phaseY, 0.05 * timeXPercent);
 
         mapTest(0, 0, width, 0, 0, height);
         mapTest(width, 0, 0, 0, width, height);
