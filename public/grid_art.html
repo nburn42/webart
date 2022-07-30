@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* to remove the top and left whitespace */
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* just to be sure these are full screen*/
+
+        canvas {
+            display: block;
+        }
+
+        /* To remove the scrollbars */
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="100%" height="100%"></canvas>
+<script type="application/javascript">
+    Number.prototype.mod = function (n) {
+        return ((this % n) + n) % n;
+    };
+
+    // var repeater = setInterval(run, 50);
+    var canvas = document.getElementById("canvas");
+    canvas.setAttribute('width', window.innerWidth);
+    canvas.setAttribute('height', window.innerHeight);
+    canvas.addEventListener('mousemove', run);
+
+    var ctx = canvas.getContext("2d");
+
+
+    function run(e) {
+        let mouseX = parseInt(e.clientX);
+        let mouseY = parseInt(e.clientY);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // change color every time
+        ctx.fillStyle = '#172496';
+        ctx.strokeStyle = '#081abf';
+
+        ctx.beginPath();
+        // ctx.moveTo(100, 200);
+        // ctx.lineTo(300, 400);
+        for (var xx = 0; xx <= 100; xx = xx + 1) {
+            for (var yy = 0; yy <= 100; yy = yy + 1) {
+                ctx.fillStyle = 'rgb(' + (50 * xx).mod(255) + ',100,' + (50 * yy).mod(255) + ')';
+                drawGrid(100 * xx, 100 * yy, 3 + yy.mod(xx + 1).mod(15), 3 + xx.mod(yy + 1).mod(15), 15, 15);
+            }
+        }
+
+        ctx.stroke();
+    }
+
+    function drawGrid(startX, startY, w, h, gapX, gapY) {
+        for (var x = 0; x <= 5; x += 1) {
+            for (var y = 0; y <= 5; y += 1) {
+                if((x * y).mod(w) === (x * y).mod(h))
+                ctx.fillRect((x * gapX) - w + startX, (y * gapY) - h + startY, w * 2, h * 2);
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
